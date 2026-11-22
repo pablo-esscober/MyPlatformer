@@ -9,7 +9,10 @@ public class PatrolState : IState
     public void Tick()
     {
         if (ctx.IsGrounded && (ctx.AtEdge() || ctx.AtWall()))
+        {
+            ctx.Stop();
             ctx.Flip();
+        }
 
         ctx.Move(ctx.Stats.patrolSpeed);
 

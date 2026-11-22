@@ -43,17 +43,26 @@ public class PlayerController : MonoBehaviour
     [SerializeField, Range(0.1f, 2f)] private float interactRadius = 0.6f;
     [SerializeField] private LayerMask interactableLayer;
 
+    [Header("Ближня атака (E)")]
+    [SerializeField, Range(1, 100)]     private int meleeDamage = 15;
+    [SerializeField, Range(0.2f, 2f)]   private float attackRadius = 0.85f;
+    [SerializeField, Range(0.2f, 1.5f)] private float attackOffsetX = 0.7f;
+    [SerializeField, Range(0.1f, 1f)]   private float attackCooldown = 0.3f;
+    [SerializeField] private LayerMask enemyLayer;
+
     private static readonly int SpeedHash = Animator.StringToHash("Speed");
 
     private Rigidbody2D body;
     private PlayerControls controls;
     private float moveInput;
+    private int facing = 1;
     private bool isGrounded;
     private bool wasGrounded;
     private float fallSpeed;
     private float coyoteCounter;
     private float jumpBufferCounter;
     private float stepTimer;
+    private float nextAttackTime;
 
     private float JumpVelocity =>
         Mathf.Sqrt(2f * Mathf.Abs(Physics2D.gravity.y) * baseGravity * jumpHeight);
@@ -92,7 +101,10 @@ public class PlayerController : MonoBehaviour
         }
 
         if (controls.Player.Interact.WasPressedThisFrame())
+        {
             TryInteract();
+            TryMeleeAttack();
+        }
 
         moveInput = controls.Player.Move.ReadValue<Vector2>().x;
 
@@ -134,6 +146,31 @@ public class PlayerController : MonoBehaviour
             target.Interact();
     }
 
+    private void TryMeleeAttack()
+    {
+        if (Time.time < nextAttackTime) return;
+        nextAttackTime = Time.time + attackCooldown;
+
+        Vector2 origin = interactPoint != null
+            ? (Vector2)interactPoint.position
+            : (Vector2)transform.position + Vector2.up * 0.6f;
+        Vector2 hitCenter = origin + new Vector2(facing * attackOffsetX, 0f);
+
+        Collider2D[] hits = Physics2D.OverlapCircleAll(hitCenter, attackRadius, enemyLayer);
+        bool landed = false;
+        foreach (Collider2D hit in hits)
+        {
+            if (hit.TryGetComponent(out IDamageable target))
+            {
+                target.TakeDamage(meleeDamage, transform.position);
+                landed = true;
+            }
+        }
+
+        if (landed && impulseSource != null)
+            impulseSource.GenerateImpulseWithForce(0.15f);
+    }
+
     private void CheckLanding()
     {
         if (!isGrounded)
@@ -160,8 +197,12 @@ public class PlayerController : MonoBehaviour
         if (animator != null)
             animator.SetFloat(SpeedHash, Mathf.Abs(body.linearVelocity.x));
 
-        if (spriteRenderer != null && Mathf.Abs(moveInput) > 0.01f)
-            spriteRenderer.flipX = moveInput < 0f;
+        if (Mathf.Abs(moveInput) > 0.01f)
+        {
+            facing = moveInput < 0f ? -1 : 1;
+            if (spriteRenderer != null)
+                spriteRenderer.flipX = facing < 0;
+        }
     }
 
     private void UpdateFootsteps()
@@ -192,8 +233,17 @@ public class PlayerController : MonoBehaviour
 
     private void OnDrawGizmosSelected()
     {
-        if (groundCheck == null) return;
-        Gizmos.color = Application.isPlaying && isGrounded ? Color.green : Color.red;
-        Gizmos.DrawWireSphere(groundCheck.position, groundCheckRadius);
+        if (groundCheck != null)
+        {
+            Gizmos.color = Application.isPlaying && isGrounded ? Color.green : Color.red;
+            Gizmos.DrawWireSphere(groundCheck.position, groundCheckRadius);
+        }
+
+        if (interactPoint != null)
+        {
+            Gizmos.color = Color.magenta;
+            Vector2 hitCenter = (Vector2)interactPoint.position + new Vector2(facing * attackOffsetX, 0f);
+            Gizmos.DrawWireSphere(hitCenter, attackRadius);
+        }
     }
 }

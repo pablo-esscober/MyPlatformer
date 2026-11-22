@@ -85,6 +85,19 @@ public class EnemyController : MonoBehaviour
         Machine.Tick();
     }
 
+    private void FixedUpdate()
+    {
+        // Hard platform-edge safety guard: neither fast movement nor knockback can push enemy off a ledge
+        if (!IsGrounded || edgeCheck == null) return;
+
+        float vx = Body.linearVelocity.x;
+        if (Mathf.Abs(vx) <= 0.01f) return;
+
+        float moveDir = Mathf.Sign(vx);
+        if (!HasGroundInDirection(moveDir))
+            Body.linearVelocity = new Vector2(0f, Body.linearVelocity.y);
+    }
+
     public float DistanceToTarget =>
         Target != null ? Mathf.Abs(Target.position.x - transform.position.x) : float.MaxValue;
 
@@ -94,6 +107,11 @@ public class EnemyController : MonoBehaviour
 
     public void Move(float speed)
     {
+        if (IsGrounded && AtEdge())
+        {
+            Stop();
+            return;
+        }
         Body.linearVelocity = new Vector2(Facing * speed, Body.linearVelocity.y);
         if (Animator != null) Animator.SetFloat("Speed", Mathf.Abs(Body.linearVelocity.x));
     }
@@ -130,6 +148,14 @@ public class EnemyController : MonoBehaviour
 
     public bool AtEdge() =>
         edgeCheck != null && !Physics2D.OverlapCircle(edgeCheck.position, ProbeRadius, groundLayer);
+
+    private bool HasGroundInDirection(float dirSign)
+    {
+        float s = stats != null ? stats.sizeScale : 1f;
+        Vector2 probePos = (Vector2)transform.position +
+            new Vector2(dirSign * Mathf.Abs(edgeCheck.localPosition.x) * s, edgeCheck.localPosition.y * s);
+        return Physics2D.OverlapCircle(probePos, ProbeRadius, groundLayer);
+    }
 
     public bool AtWall() =>
         wallCheck != null && Physics2D.OverlapCircle(wallCheck.position, ProbeRadius, groundLayer);

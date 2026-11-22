@@ -12,19 +12,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 568df29ce9e0eae4bbdf906fdc5bda5d, type: 3}
   m_Name: Enemy_Shooter
   m_EditorClassIdentifier: Assembly-CSharp::EnemyStatsSO
-  patrolSpeed: 1
-  chaseSpeed: 1.4
-  chaseRange: 8
-  attackRange: 6
-  attackRadius: 0.6
+  patrolSpeed: 1.8
+  chaseSpeed: 2.6
+  chaseRange: 9.5
+  attackRange: 7
+  attackRadius: 0.85
   verticalTolerance: 1.5
   chaseExitFactor: 1.2
   loseTargetTime: 1
   stopDistance: 4
   maxHealth: 30
   damage: 10
-  telegraphTime: 0.55
-  recoveryTime: 0.6
+  telegraphTime: 0.45
+  recoveryTime: 0.45
   hurtTime: 0.3
   tint: {r: 0.9490196, g: 0.7882353, b: 0.29803923, a: 1}
   sizeScale: 1

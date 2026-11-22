@@ -5,11 +5,15 @@ public class EnemyHealthBar : MonoBehaviour
     [SerializeField] private Health health;
     [SerializeField] private Transform fillPivot;
     [SerializeField] private float fullWidth = 0.9f;
+    [SerializeField] private bool hideWhenFull = false;
+
+    private SpriteRenderer[] renderers;
 
     private void Awake()
     {
         if (health == null)
             health = GetComponentInParent<Health>();
+        renderers = GetComponentsInChildren<SpriteRenderer>(true);
     }
 
     private void OnEnable()
@@ -32,7 +36,7 @@ public class EnemyHealthBar : MonoBehaviour
 
     private void LateUpdate()
     {
-        // Keep bar orientation unflipped when parent enemy flips X scale
+        // Keep bar orientation unflipped when parent flips X scale
         if (transform.parent != null)
         {
             float parentSign = transform.parent.lossyScale.x < 0f ? -1f : 1f;
@@ -44,11 +48,13 @@ public class EnemyHealthBar : MonoBehaviour
 
     private void UpdateBar(int current, int max)
     {
-        if (current <= 0)
+        bool visible = current > 0 && (!hideWhenFull || current < max);
+        if (renderers != null)
         {
-            gameObject.SetActive(false);
-            return;
+            foreach (var r in renderers)
+                if (r != null) r.enabled = visible;
         }
+        if (!visible) return;
 
         float ratio = max > 0 ? Mathf.Clamp01((float)current / max) : 0f;
         if (fillPivot != null)

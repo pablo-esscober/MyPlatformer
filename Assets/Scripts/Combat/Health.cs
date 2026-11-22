@@ -38,6 +38,18 @@ public class Health : MonoBehaviour, IDamageable
         OnHealthChanged?.Invoke(current, maxHealth);
     }
 
+    public void GrantTemporaryInvulnerability(float duration)
+    {
+        invulnerableUntil = Mathf.Max(invulnerableUntil, Time.time + duration);
+    }
+
+    public void Heal(int amount)
+    {
+        if (amount <= 0 || current <= 0 || current >= maxHealth) return;
+        current = Mathf.Min(maxHealth, current + amount);
+        OnHealthChanged?.Invoke(current, maxHealth);
+    }
+
     public void TakeDamage(int amount, Vector2 sourcePosition)
     {
         if (current <= 0 || Time.time < invulnerableUntil) return;

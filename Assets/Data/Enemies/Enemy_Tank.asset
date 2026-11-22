@@ -12,19 +12,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 568df29ce9e0eae4bbdf906fdc5bda5d, type: 3}
   m_Name: Enemy_Tank
   m_EditorClassIdentifier: Assembly-CSharp::EnemyStatsSO
-  patrolSpeed: 0.8
-  chaseSpeed: 1.8
-  chaseRange: 5
-  attackRange: 1.4
-  attackRadius: 0.6
+  patrolSpeed: 1.5
+  chaseSpeed: 3
+  chaseRange: 6.5
+  attackRange: 1.5
+  attackRadius: 0.9
   verticalTolerance: 1.5
   chaseExitFactor: 1.2
   loseTargetTime: 1
   stopDistance: 0.6
   maxHealth: 90
-  damage: 20
-  telegraphTime: 0.8
-  recoveryTime: 0.7
+  damage: 10
+  telegraphTime: 0.55
+  recoveryTime: 0.45
   hurtTime: 0.3
   tint: {r: 0.35686275, g: 0.42745098, b: 0.50980395, a: 1}
   sizeScale: 1.35

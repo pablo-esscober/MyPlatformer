@@ -256,6 +256,7 @@ MonoBehaviour:
   health: {fileID: 3902774810885675300}
   fillPivot: {fileID: 5424532524299673336}
   fullWidth: 0.9
+  hideWhenFull: 0
 --- !u!1 &4311777059606087924
 GameObject:
   m_ObjectHideFlags: 0
@@ -684,7 +685,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::EnemyHealth
   maxHealth: 30
   invulnerableTime: 0.5
-  knockbackForce: 7
+  knockbackForce: 3.5
   controller: {fileID: 8368261275643320576}
   hitbox: {fileID: 3397017824125977317}
 --- !u!114 &7894880005883127092
@@ -730,7 +731,7 @@ Transform:
   m_GameObject: {fileID: 8994506252420591447}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.55, y: -0.15, z: 0}
+  m_LocalPosition: {x: 0.65, y: -0.15, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
