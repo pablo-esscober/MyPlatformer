@@ -2090,6 +2090,8 @@ GameObject:
   - component: {fileID: 1285148712}
   - component: {fileID: 1285148711}
   - component: {fileID: 1285148710}
+  - component: {fileID: 1285148714}
+  - component: {fileID: 1285148713}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -2237,6 +2239,64 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_SpriteSortPoint: 0
   m_BlendShapeWeights: []
+--- !u!114 &1285148713
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1285148708}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8efd0cb975f07fe4983cdd3887a9808c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerController
+  maxSpeed: 8
+  acceleration: 70
+  deceleration: 90
+  groundCheck: {fileID: 985063960}
+  groundCheckRadius: 0.15
+  groundLayer:
+    serializedVersion: 2
+    m_Bits: 64
+  jumpHeight: 3
+  baseGravity: 3
+  coyoteTime: 0.12
+  jumpBufferTime: 0.15
+  fallMultiplier: 2.2
+  lowJumpMultiplier: 3.5
+  animator: {fileID: 1285148714}
+  spriteRenderer: {fileID: 1285148712}
+  hardLandingSpeed: 9
+  shakeDuration: 0.12
+  shakeStrength: 0.12
+  cameraShake: {fileID: 0}
+  source: {fileID: 0}
+  footsteps: []
+  pitchVariance: 0.12
+  stepInterval: 0.32
+--- !u!95 &1285148714
+Animator:
+  serializedVersion: 7
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1285148708}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: c744fe5d1daa17946b091542aca06e14, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_AnimatePhysics: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!1001 &1371397109
 PrefabInstance:
   m_ObjectHideFlags: 0
