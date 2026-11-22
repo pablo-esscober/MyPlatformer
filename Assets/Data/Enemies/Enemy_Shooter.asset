@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 568df29ce9e0eae4bbdf906fdc5bda5d, type: 3}
   m_Name: Enemy_Shooter
   m_EditorClassIdentifier: Assembly-CSharp::EnemyStatsSO
-  patrolSpeed: 1.8
-  chaseSpeed: 2.6
+  patrolSpeed: 0
+  chaseSpeed: 0
   chaseRange: 9.5
   attackRange: 7
   attackRadius: 0.85

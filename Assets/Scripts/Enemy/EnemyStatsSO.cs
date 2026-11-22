@@ -4,8 +4,8 @@ using UnityEngine;
 public class EnemyStatsSO : ScriptableObject
 {
     [Header("Рух")]
-    [Range(0.5f, 8f)]  public float patrolSpeed = 1.5f;
-    [Range(0.5f, 10f)] public float chaseSpeed  = 3f;
+    [Range(0f, 8f)]  public float patrolSpeed = 1.5f;
+    [Range(0f, 10f)] public float chaseSpeed  = 3f;
 
     [Header("Відстані")]
     [Range(1f, 15f)]  public float chaseRange        = 6f;

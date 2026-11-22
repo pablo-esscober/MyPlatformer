@@ -23,7 +23,9 @@ public class EnemyController : MonoBehaviour
     [Header("Стрільба")]
     [SerializeField] private Projectile projectilePrefab;
 
-    private const float ProbeRadius = 0.1f;
+    private const float ProbeRadius = 0.15f;
+    private const float EdgeRayStartOffsetY = 0.25f;
+    private const float EdgeRayLength = 0.6f;
     private const float FacingDeadZone = 0.15f;
 
     public EnemyStatsSO Stats => stats;
@@ -107,7 +109,7 @@ public class EnemyController : MonoBehaviour
 
     public void Move(float speed)
     {
-        if (IsGrounded && AtEdge())
+        if (speed <= 0.001f || (IsGrounded && AtEdge()))
         {
             Stop();
             return;
@@ -147,18 +149,26 @@ public class EnemyController : MonoBehaviour
         groundCheck != null && Physics2D.OverlapCircle(groundCheck.position, ProbeRadius, groundLayer);
 
     public bool AtEdge() =>
-        edgeCheck != null && !Physics2D.OverlapCircle(edgeCheck.position, ProbeRadius, groundLayer);
+        edgeCheck != null && !HasGroundInDirection(Facing);
 
     private bool HasGroundInDirection(float dirSign)
     {
         float s = stats != null ? stats.sizeScale : 1f;
-        Vector2 probePos = (Vector2)transform.position +
-            new Vector2(dirSign * Mathf.Abs(edgeCheck.localPosition.x) * s, edgeCheck.localPosition.y * s);
-        return Physics2D.OverlapCircle(probePos, ProbeRadius, groundLayer);
+        float aheadX = Mathf.Abs(edgeCheck.localPosition.x) * s;
+        Vector2 rayOrigin = (Vector2)transform.position + new Vector2(dirSign * aheadX, EdgeRayStartOffsetY * s);
+        RaycastHit2D hit = Physics2D.Raycast(rayOrigin, Vector2.down, EdgeRayLength * s, groundLayer);
+        return hit.collider != null;
     }
 
-    public bool AtWall() =>
-        wallCheck != null && Physics2D.OverlapCircle(wallCheck.position, ProbeRadius, groundLayer);
+    public bool AtWall()
+    {
+        if (wallCheck == null) return false;
+        float s = stats != null ? stats.sizeScale : 1f;
+        float dist = Mathf.Abs(wallCheck.localPosition.x) * s;
+        Vector2 origin = (Vector2)transform.position + new Vector2(0f, wallCheck.localPosition.y * s);
+        RaycastHit2D hit = Physics2D.Raycast(origin, new Vector2(Facing, 0f), dist, groundLayer);
+        return hit.collider != null;
+    }
 
     public void PlayTelegraph()
     {
@@ -198,7 +208,19 @@ public class EnemyController : MonoBehaviour
         }
         Gizmos.color = Color.cyan;
         if (groundCheck != null) Gizmos.DrawWireSphere(groundCheck.position, ProbeRadius);
-        if (edgeCheck != null)   Gizmos.DrawWireSphere(edgeCheck.position, ProbeRadius);
-        if (wallCheck != null)   Gizmos.DrawWireSphere(wallCheck.position, ProbeRadius);
+        if (edgeCheck != null)
+        {
+            float s = stats != null ? stats.sizeScale : 1f;
+            float aheadX = Mathf.Abs(edgeCheck.localPosition.x) * s;
+            Vector3 start = transform.position + new Vector3(Facing * aheadX, EdgeRayStartOffsetY * s, 0f);
+            Gizmos.DrawLine(start, start + Vector3.down * (EdgeRayLength * s));
+        }
+        if (wallCheck != null)
+        {
+            float s = stats != null ? stats.sizeScale : 1f;
+            float dist = Mathf.Abs(wallCheck.localPosition.x) * s;
+            Vector3 start = transform.position + new Vector3(0f, wallCheck.localPosition.y * s, 0f);
+            Gizmos.DrawLine(start, start + new Vector3(Facing * dist, 0f, 0f));
+        }
     }
 }

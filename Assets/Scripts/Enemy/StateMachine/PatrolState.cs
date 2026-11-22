@@ -8,13 +8,20 @@ public class PatrolState : IState
 
     public void Tick()
     {
-        if (ctx.IsGrounded && (ctx.AtEdge() || ctx.AtWall()))
+        if (ctx.Stats.patrolSpeed > 0.001f)
+        {
+            if (ctx.IsGrounded && (ctx.AtEdge() || ctx.AtWall()))
+            {
+                ctx.Stop();
+                ctx.Flip();
+            }
+
+            ctx.Move(ctx.Stats.patrolSpeed);
+        }
+        else
         {
             ctx.Stop();
-            ctx.Flip();
         }
-
-        ctx.Move(ctx.Stats.patrolSpeed);
 
         if (ctx.DistanceToTarget <= ctx.Stats.chaseRange && ctx.TargetOnSameLevel)
             ctx.Machine.ChangeState(ctx.ChaseState);
