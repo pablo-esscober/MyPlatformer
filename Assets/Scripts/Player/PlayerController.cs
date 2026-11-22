@@ -84,6 +84,8 @@ public class PlayerController : MonoBehaviour
 
     private void Update()
     {
+        if (PauseController.IsPaused) return;
+
         isGrounded = CheckGround();
 
         bool canRefill = isGrounded && body.linearVelocity.y <= 0.01f;
