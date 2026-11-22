@@ -7072,6 +7072,37 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &721187654
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 721187655}
+  m_Layer: 9
+  m_Name: StompPoint
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &721187655
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 721187654}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1285148709}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &806062237
 GameObject:
   m_ObjectHideFlags: 0
@@ -7937,9 +7968,11 @@ GameObject:
   - component: {fileID: 1285148715}
   - component: {fileID: 1285148716}
   - component: {fileID: 1285148717}
-  m_Layer: 0
+  - component: {fileID: 1285148719}
+  - component: {fileID: 1285148718}
+  m_Layer: 9
   m_Name: Player
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -7959,6 +7992,7 @@ Transform:
   m_Children:
   - {fileID: 985063960}
   - {fileID: 492440398}
+  - {fileID: 721187655}
   m_Father: {fileID: 507933646}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!70 &1285148710
@@ -8312,6 +8346,41 @@ MonoBehaviour:
     DissipationDistance: 100
     PropagationSpeed: 343
   DefaultVelocity: {x: 0, y: -1, z: 0}
+--- !u!114 &1285148718
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1285148708}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7f778d0cd10ec744b82ef3e81523edab, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerStomp
+  stompPoint: {fileID: 721187655}
+  radius: 0.3
+  enemyLayer:
+    serializedVersion: 2
+    m_Bits: 1024
+  damage: 15
+  bounceForce: 9
+--- !u!114 &1285148719
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1285148708}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 61ad2257a44beef44b38296d8dc6ce2e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerHealth
+  maxHealth: 30
+  invulnerableTime: 0.6
+  knockbackForce: 8
+  respawn: {fileID: 1285148716}
 --- !u!1 &1304503156
 GameObject:
   m_ObjectHideFlags: 0
@@ -8931,6 +9000,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Lever
   target: {fileID: 1738982071}
+  spriteRenderer: {fileID: 0}
+  offSprite: {fileID: 0}
+  onSprite: {fileID: 0}
 --- !u!61 &2125400863
 BoxCollider2D:
   m_ObjectHideFlags: 0
