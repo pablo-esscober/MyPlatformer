@@ -1,3 +1,4 @@
+using Unity.Cinemachine;
 using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody2D))]
@@ -28,16 +29,19 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private SpriteRenderer spriteRenderer;
 
     [Header("Зворотний зв'язок")]
-    [SerializeField, Range(1f, 20f)]   private float hardLandingSpeed = 9f;
-    [SerializeField, Range(0.05f, 0.3f)] private float shakeDuration = 0.12f;
-    [SerializeField, Range(0.02f, 0.3f)] private float shakeStrength = 0.12f;
-    [SerializeField] private CameraShake cameraShake;
+    [SerializeField, Range(1f, 20f)] private float hardLandingSpeed = 9f;
+    [SerializeField] private CinemachineImpulseSource impulseSource;
 
     [Header("Звук")]
     [SerializeField] private AudioSource source;
     [SerializeField] private AudioClip[] footsteps;
     [SerializeField, Range(0f, 0.3f)]   private float pitchVariance = 0.12f;
     [SerializeField, Range(0.1f, 0.8f)] private float stepInterval = 0.32f;
+
+    [Header("Взаємодія")]
+    [SerializeField] private Transform interactPoint;
+    [SerializeField, Range(0.1f, 2f)] private float interactRadius = 0.6f;
+    [SerializeField] private LayerMask interactableLayer;
 
     private static readonly int SpeedHash = Animator.StringToHash("Speed");
 
@@ -62,7 +66,7 @@ public class PlayerController : MonoBehaviour
         if (animator == null) animator = GetComponent<Animator>();
         if (spriteRenderer == null) spriteRenderer = GetComponent<SpriteRenderer>();
         if (source == null) source = GetComponent<AudioSource>();
-        if (cameraShake == null) cameraShake = FindAnyObjectByType<CameraShake>();
+        if (impulseSource == null) impulseSource = GetComponent<CinemachineImpulseSource>();
     }
 
     private void OnEnable()  => controls.Player.Enable();
@@ -86,6 +90,9 @@ public class PlayerController : MonoBehaviour
             jumpBufferCounter = 0f;
             coyoteCounter = 0f;
         }
+
+        if (controls.Player.Interact.WasPressedThisFrame())
+            TryInteract();
 
         moveInput = controls.Player.Move.ReadValue<Vector2>().x;
 
@@ -119,6 +126,14 @@ public class PlayerController : MonoBehaviour
         body.linearVelocity = new Vector2(body.linearVelocity.x, JumpVelocity);
     }
 
+    private void TryInteract()
+    {
+        if (interactPoint == null) return;
+        Collider2D hit = Physics2D.OverlapCircle(interactPoint.position, interactRadius, interactableLayer);
+        if (hit != null && hit.TryGetComponent(out IInteractable target))
+            target.Interact();
+    }
+
     private void CheckLanding()
     {
         if (!isGrounded)
@@ -136,8 +151,8 @@ public class PlayerController : MonoBehaviour
     private void OnLanded(float speed)
     {
         if (speed < hardLandingSpeed) return;
-        if (cameraShake != null)
-            cameraShake.Shake(shakeDuration, shakeStrength);
+        if (impulseSource != null)
+            impulseSource.GenerateImpulseWithForce(0.3f);
     }
 
     private void UpdateVisuals()
