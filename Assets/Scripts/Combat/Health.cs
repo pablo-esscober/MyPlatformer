@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody2D))]
@@ -13,6 +14,10 @@ public class Health : MonoBehaviour, IDamageable
 
     public int Current => current;
     public int Max => maxHealth;
+    public float InvulnerableTime => invulnerableTime;
+
+    public event Action<int, int> OnHealthChanged;
+    public event Action OnDamagedEvent;
 
     protected virtual void Awake()
     {
@@ -24,11 +29,13 @@ public class Health : MonoBehaviour, IDamageable
     {
         maxHealth = Mathf.Max(1, max);
         current = maxHealth;
+        OnHealthChanged?.Invoke(current, maxHealth);
     }
 
     public void ResetHealth()
     {
         current = maxHealth;
+        OnHealthChanged?.Invoke(current, maxHealth);
     }
 
     public void TakeDamage(int amount, Vector2 sourcePosition)
@@ -42,6 +49,9 @@ public class Health : MonoBehaviour, IDamageable
         if (dir.sqrMagnitude < 0.001f) dir = Vector2.up;
         dir = new Vector2(dir.x, Mathf.Max(dir.y, 0.35f)).normalized;
         body.AddForce(dir * knockbackForce, ForceMode2D.Impulse);
+
+        OnHealthChanged?.Invoke(current, maxHealth);
+        OnDamagedEvent?.Invoke();
 
         if (current == 0) Die();
         else              OnDamaged();
