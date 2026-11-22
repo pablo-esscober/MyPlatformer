@@ -4,6 +4,10 @@ public class PlayerHealth : Health
 {
     [SerializeField] private PlayerRespawn respawn;
 
+    [Header("Канали подій")]
+    [SerializeField] private IntEventSO healthChanged;
+    [SerializeField] private IntEventSO maxHealthChanged;
+
     [Header("Регенерація здоров'я")]
     [SerializeField, Range(0.5f, 10f)] private float regenDelay = 3f;
     [SerializeField, Range(1f, 30f)]   private float regenRate  = 6f;
@@ -15,6 +19,15 @@ public class PlayerHealth : Health
     {
         base.Awake();
         if (respawn == null) respawn = GetComponent<PlayerRespawn>();
+    }
+
+    private void OnEnable() => OnHealthChanged += ForwardHealthEvent;
+    private void OnDisable() => OnHealthChanged -= ForwardHealthEvent;
+
+    private void Start()
+    {
+        if (maxHealthChanged != null) maxHealthChanged.Raise(Max);
+        if (healthChanged != null) healthChanged.Raise(Current);
     }
 
     private void Update()
@@ -34,6 +47,12 @@ public class PlayerHealth : Health
             regenAccumulator -= healAmount;
             Heal(healAmount);
         }
+    }
+
+    private void ForwardHealthEvent(int currentHp, int maxHp)
+    {
+        if (healthChanged != null)
+            healthChanged.Raise(currentHp);
     }
 
     protected override void OnDamaged()
